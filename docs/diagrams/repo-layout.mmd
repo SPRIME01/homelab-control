@@ -1,0 +1,25 @@
+```mermaid
+graph TD
+    A[Root Directory] --> B[apps/]
+    A --> C[libs/]
+    A --> D[tools/]
+    A --> E[backups/]
+    A --> F[docker/]
+    A --> G[Makefile]
+    A --> H[nx.json]
+    A --> I[package.json]
+    A --> J[pyproject.toml]
+    A --> K[README.md]
+
+    B --> B1[pulumi-control/]
+    B --> B2[ansible-playbooks/]
+    B --> B3[argocd-helm-charts/]
+    B --> B4[otel-collector/]
+
+    C --> C1[shared-types/]
+    C --> C2[kube-utils/]
+    C --> C3[ci-scripts/]
+
+    D --> D1[nx-plugins/]
+    D --> D2[generators/]
+```

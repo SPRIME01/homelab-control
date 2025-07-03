@@ -1,0 +1,24 @@
+```mermaid
+flowchart LR
+  subgraph Home Station (WSL2: 182.168.0.51)
+    Pulumi --> K3s[🖥️ K3s Control Plane]
+    Ansible --> K3s
+    K3s -- Ingress --> Traefik[🌐 Traefik Ingress]
+    Traefik --> Authelia[🔒 Authelia]
+    Traefik --> Bitwarden[🔑 Bitwarden]
+    Traefik --> ArgoCD[🔄 ArgoCD]
+    Traefik --> Guacamole[🖥️ Guacamole]
+    Traefik --> Homepage[🏠 Homepage Portal]
+    Traefik --> Vault[🗝️ Vault]
+    K3s --> Observability[📊 OTEL → InfluxDB, Loki, Prom, Jaeger, Grafana]
+  end
+
+  subgraph LAN (192.168.0.0/24)
+    Router[🛡️ OpenWRT + AdGuard + Tailscale]
+    HomeAssistant[🏡 HA Yellow (MQTT & InfluxDB)]
+  end
+
+  HomeStation -- MQTT --> HomeAssistant
+  HomeStation -- MQTT --> Router
+  Router -- Tailscale --> Jetsons[🚀 Jetson Actor Nodes]
+```

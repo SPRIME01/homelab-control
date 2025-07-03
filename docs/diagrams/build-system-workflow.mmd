@@ -1,0 +1,72 @@
+```mermaid
+flowchart LR
+    User[User] --> Make[Makefile: Main Orchestration]
+
+    subgraph Make Commands
+        Make --> Setup[make setup]
+        Make --> AppGen[make app NAME=...]
+        Make --> LibGen[make lib NAME=...]
+        Make --> Lint[make lint]
+        Make --> Typecheck[make typecheck]
+        Make --> Test[make test]
+        Make --> Build[make build]
+        Make --> InfraPlan[make infra-plan TARGET=...]
+        Make --> InfraApply[make infra-apply TARGET=...]
+        Make --> AnsibleRun[make ansible-run PLAYBOOK=...]
+        Make --> Containerize[make containerize PROJECT=...]
+    end
+
+    Setup --> PnpmInit[pnpm init (Nx workspace)]
+    Setup --> PythonEnv[pyenv + uv setup]
+    Setup --> CustomGen[Install custom Python generators]
+    Setup --> PreCommit[Configure pre-commit hooks]
+
+    AppGen --> NxGen[Nx Generators]
+    LibGen --> NxGen
+    NxGen --> PythonScaffolding[Python project scaffolding (uv, ruff, mypy, pytest)]
+
+    Lint --> Ruff[Ruff]
+    Lint --> NxAffected[Nx affected (lint)]
+
+    Typecheck --> Mypy[Mypy]
+    Typecheck --> NxAffectedType[Nx affected (typecheck)]
+
+    Test --> Pytest[Pytest]
+    Test --> NxAffectedTest[Nx affected (test)]
+
+    Build --> NxAffectedBuild[Nx affected (build)]
+
+    PreCommit --> GitHooks[Git Hooks]
+    GitHooks --> Ruff
+    GitHooks --> Mypy
+    GitHooks --> Pytest
+    GitHooks --> NxAffected
+
+    style Make fill:#f9f,stroke:#333,stroke-width:2px
+    style Setup fill:#ccf,stroke:#333,stroke-width:2px
+    style AppGen fill:#ccf,stroke:#333,stroke-width:2px
+    style LibGen fill:#ccf,stroke:#333,stroke-width:2px
+    style Lint fill:#ccf,stroke:#333,stroke-width:2px
+    style Typecheck fill:#ccf,stroke:#333,stroke-width:2px
+    style Test fill:#ccf,stroke:#333,stroke-width:2px
+    style Build fill:#ccf,stroke:#333,stroke-width:2px
+    style InfraPlan fill:#ccf,stroke:#333,stroke-width:2px
+    style InfraApply fill:#ccf,stroke:#333,stroke-width:2px
+    style AnsibleRun fill:#ccf,stroke:#333,stroke-width:2px
+    style Containerize fill:#ccf,stroke:#333,stroke-width:2px
+
+    style PnpmInit fill:#cfc,stroke:#333,stroke-width:2px
+    style PythonEnv fill:#cfc,stroke:#333,stroke-width:2px
+    style CustomGen fill:#cfc,stroke:#333,stroke-width:2px
+    style PreCommit fill:#cfc,stroke:#333,stroke-width:2px
+    style NxGen fill:#cfc,stroke:#333,stroke-width:2px
+    style PythonScaffolding fill:#cfc,stroke:#333,stroke-width:2px
+    style Ruff fill:#cfc,stroke:#333,stroke-width:2px
+    style NxAffected fill:#cfc,stroke:#333,stroke-width:2px
+    style Mypy fill:#cfc,stroke:#333,stroke-width:2px
+    style NxAffectedType fill:#cfc,stroke:#333,stroke-width:2px
+    style Pytest fill:#cfc,stroke:#333,stroke-width:2px
+    style NxAffectedTest fill:#cfc,stroke:#333,stroke-width:2px
+    style NxAffectedBuild fill:#cfc,stroke:#333,stroke-width:2px
+    style GitHooks fill:#cfc,stroke:#333,stroke-width:2px
+```
