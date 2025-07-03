@@ -30,6 +30,7 @@
 - **🚁 GitOps CD** powered by ArgoCD
 - **🔄 Self‑healing & Backups** with Velero, Vault snapshots, DB dumps
 - **🧩 Modular Nx Monorepo**: generate, test, and deploy any service with Nx CLI
+- **⚡ Hybrid Build System**: Make orchestration + pnpm/Nx + uv for Python
 
 ---
 
@@ -40,21 +41,20 @@
 git clone https://github.com/SPRIME01/homelab-control.git
 cd homelab-control
 
-# 2. Install dependencies
-npm install
-pip install -r apps/ansible-playbooks/requirements.txt
+# 2. One-time setup (installs all dependencies & tools)
+make setup
 
-# 3. Bootstrap WSL2 host
-nx run ansible-playbooks:bootstrap
+# 3. Deploy infrastructure
+make infra-apply TARGET=control-plane
 
-# 4. Deploy control plane
-nx run pulumi-control:deploy
+# 4. Apply configuration management
+make ansible-run PLAYBOOK=bootstrap-wsl2
 
-# 5. Sync GitOps apps
-nx run argocd-helm-charts:deploy
+# 5. Deploy applications via GitOps
+make infra-apply TARGET=argocd-apps
 
-# 6. Verify services in Traefik dashboard → https://traefik.home.local
-````
+# 6. Verify services → https://traefik.home.local
+```
 
 ---
 
@@ -93,11 +93,9 @@ flowchart LR
 /
 ├── apps/
 │   ├── pulumi-control/           # Pulumi TS infra (K3s, Traefik, Vault, Cloudflare)
-│   ├── pulumi-jetson/            # Pulumi for Jetson cluster provisioning
 │   ├── ansible-playbooks/        # WSL2 host bootstrap & config
 │   ├── argocd-helm-charts/       # Helm charts for Authelia, Bitwarden, Vault, Homepage, Guacamole
-│   ├── otel-collector/           # OpenTelemetry Collector config
-│   └── fastapi-services/         # Any custom APIs (e.g., feedback, telemetry)
+│   └── otel-collector/           # OpenTelemetry Collector config
 │
 ├── libs/
 │   ├── shared-types/             # Pydantic & TS interfaces for shared configs
@@ -110,9 +108,10 @@ flowchart LR
 │
 ├── backups/                      # Velero, Vault snapshots, DB dump jobs
 ├── docker/                       # Harbor & local dev stack values
+├── Makefile                      # Main orchestration (⭐ start here!)
 ├── nx.json                       # Nx workspace config
-├── workspace.json                # Nx projects config
-├── package.json                  # Nx & dev dependencies
+├── package.json                  # Node.js + Nx dependencies
+├── pyproject.toml               # Python dev dependencies (uv managed)
 └── README.md                     # ← you are here!
 ```
 
@@ -121,7 +120,9 @@ flowchart LR
 ## 🔧 Prerequisites
 
 * **Windows 11 Pro** with WSL2 (Ubuntu)
-* **Node.js ≥ 16**, **npm**
+* **Python 3.11.9** (managed via pyenv)
+* **Node.js ≥ 16** + **pnpm**
+* **uv** (Python package manager)
 * **Pulumi CLI** & **Ansible**
 * **Docker** (for local dev & Harbor)
 * **kubectl** & **Helm**
@@ -131,30 +132,89 @@ flowchart LR
 
 ## ⚙️ Usage
 
-1. **Generate new app or lib**
+### 🚀 Initial Setup
 
-   ```bash
-   nx g @nrwl/workspace:library shared-new-thing --directory=libs
-   ```
-2. **Deploy infra**
+```bash
+# Run this once to set up the entire development environment
+make setup
+```
 
-   ```bash
-   nx run pulumi-control:deploy
-   ```
-3. **Apply Ansible playbooks**
+This will:
+- Initialize Nx workspace with pnpm
+- Set up Python environment with pyenv + uv
+- Install custom Python generators
+- Configure pre-commit hooks
 
-   ```bash
-   nx run ansible-playbooks:bootstrap
-   ```
-4. **Sync GitOps**
+### 🏗️ Generate New Projects
 
-   ```bash
-   nx run argocd-helm-charts:deploy
-   ```
-5. **Monitor & dashboards**
+```bash
+# Create a new Python application
+make app NAME=my-fastapi-service
 
-   * Grafana → `https://grafana.home.local`
-   * Jaeger → `https://jaeger.home.local`
+# Create a new Python library
+make lib NAME=my-shared-utils
+```
+
+### 🔧 Daily Development Workflow
+
+```bash
+# Lint all affected projects
+make lint
+
+# Type-check all affected projects
+make typecheck
+
+# Run tests for affected projects
+make test
+
+# Build all affected projects
+make build
+
+# Serve a specific application
+make serve PROJECT=my-react-app
+```
+
+### 🏗️ Infrastructure Management
+
+```bash
+# Plan infrastructure changes
+make infra-plan TARGET=vpc
+
+# Apply infrastructure changes
+make infra-apply TARGET=control-plane
+
+# Run Ansible playbooks
+make ansible-run PLAYBOOK=bootstrap-wsl2 HOSTS=production
+```
+
+### 🐳 Containerization
+
+```bash
+# Build Docker image for any project
+make containerize PROJECT=my-fastapi-service
+```
+
+### 📊 Monitoring & Visualization
+
+```bash
+# Open Nx dependency graph
+make graph
+
+# Access dashboards:
+# - Grafana → https://grafana.home.local
+# - Jaeger → https://jaeger.home.local
+# - Traefik → https://traefik.home.local
+```
+
+### 🛠️ Utilities
+
+```bash
+# Get help with all available commands
+make help
+
+# Clean build artifacts and caches (use with caution!)
+make clean
+```
 
 ---
 
@@ -162,7 +222,7 @@ flowchart LR
 
 * **Vault**: central secret store (auto‑unseal via Tailscale)
 * **Bitwarden**: user‑facing credentials & 2FA
-* **Ansible Vault**: encrypt playbook variables
+* **Ansible Vault**: encrypt playbook variables via [.make_assets/.pre-commit-config.yaml](.make_assets/.pre-commit-config.yaml)
 * **Harbor**: private container registry with RBAC & image signing
 
 ---
@@ -178,10 +238,25 @@ flowchart LR
 
 ## 🛠️ CI/CD & GitOps
 
-* **GitHub Actions** + **Nx Cloud** for building, testing, and publishing container images to Harbor
+* **GitHub Actions** ([.github/workflows/ci.yml](.github/workflows/ci.yml)) + **Nx Cloud** for building, testing, and publishing container images
 * **ArgoCD Image Updater** for automatic image promotion
 * **Pulumi** GitHub checks for infra drift detection
-* **Pre‑commit** hooks (Lint, security scans, fmt)
+* **Pre‑commit** hooks ([.make_assets/.pre-commit-config.yaml](.make_assets/.pre-commit-config.yaml)): lint, security scans, type checking, testing
+
+---
+
+## 🔧 Build System Details
+
+This project uses a **hybrid build approach**:
+
+- **Make** ([Makefile](Makefile)) - Main orchestration and workflow commands
+- **Nx + pnpm** ([package.json](package.json), [pnpm-lock.yaml](pnpm-lock.yaml)) - JavaScript/TypeScript project management
+- **uv** ([pyproject.toml](pyproject.toml)) - Python dependency management
+- **Custom Nx Generators** ([.make_assets/shared-python-app/](.make_assets/shared-python-app/), [.make_assets/shared-python-lib/](.make_assets/shared-python-lib/)) - Python project scaffolding with uv, ruff, mypy, pytest
+
+Key files:
+- [scripts/setup.py](scripts/setup.py) - Environment setup automation
+- [.make_assets/.pre-commit-config.yaml](.make_assets/.pre-commit-config.yaml) - Git hooks configuration
 
 ---
 
@@ -189,19 +264,27 @@ flowchart LR
 
 1. 🌱 **Fork** the repo
 2. ✏️ Create a **feature branch** (`git checkout -b feat/new-service`)
-3. ✅ **Lint & test** (`nx affected:test`)
+3. ✅ **Lint & test** (`make lint && make test`)
 4. 🔄 **Push** and open a **PR**
 5. 🎉 **Celebrate** once merged!
+
+Pre-commit hooks will automatically run:
+- Code formatting (ruff)
+- Type checking (mypy)
+- Linting (ruff, Nx affected)
+- Testing (pytest, Nx affected)
 
 ---
 
 ## 📄 License
 
-© 2025 Your Name or Organization • [MIT License](./LICENSE)
+© 2025 SPRIME01 • [MIT License](./LICENSE)
 
 ---
 
 🚀 **Happy homelabbing!** 🚀
+````
+---
 
-```
-```
+🚀 **Happy homelabbing!** 🚀
+````
