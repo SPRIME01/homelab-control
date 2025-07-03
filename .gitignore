@@ -1,0 +1,164 @@
+# ===============================================
+# Global Ignore Rules
+# ===============================================
+
+# Operating System Files
+.DS_Store # macOS
+Thumbs.db # Windows
+ehthumbs.db # Windows
+Desktop.ini # Windows
+*.pyc
+__pycache__/
+.env
+.venv/ # Python virtual environments (uv, venv, poetry etc.)
+.pytest_cache/
+*.sqlite3 # Common database file
+
+# IDEs and Editors
+.idea/ # IntelliJ / PyCharm
+.vscode/ # VS Code
+*.iml # IntelliJ modules
+*.swp # Vim swap files
+*.swo # Vim swap files
+*~ # Emacs backup files
+
+# Local Configuration (sensitive or machine-specific)
+.npmrc # pnpm/npm registry configs, auth tokens
+.env.local # Local environment variables (React etc.)
+.env.*.local # More specific local envs
+.tool-versions # asdf or similar (pyenv is usually per-project or global, but if managed here)
+
+# Logs and Temporary Files
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+.nyc_output/ # Coverage reports
+
+# ===============================================
+# Node.js / TypeScript / JavaScript
+# ===============================================
+
+node_modules/ # All node module installations (pnpm-lock.yaml tracks)
+dist/ # Compiled output
+tmp/ # Temporary files
+.angular/cache/ # Angular specific cache (if you use it)
+.next/ # Next.js build output (if using Next.js)
+
+# Nx specific
+.nx/cache/ # Nx computation cache (essential for performance, not for git)
+.nx/daemon/ # Nx daemon logs
+.nx/graphs/ # Generated graph JSONs
+
+# ===============================================
+# Python Specific
+# ===============================================
+
+# Pyenv / uv related
+.python-version # pyenv local version marker (if per-project)
+# The main .venv/ at the monorepo root is already covered by global .venv/
+
+# Python Build Artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+# For .pyz (zipapps)
+*.pyz
+*.pyz.json
+
+# Jupyter Notebook Files
+.ipynb_checkpoints/ # Jupyter auto-save checkpoints
+*.ipynb_checkpoints/
+!notebooks/.ipynb_checkpoints/ # Exception if you want to keep them in notebooks directory
+*.bak # Backup files for notebooks
+
+# ===============================================
+# Infrastructure as Code (IaC) - Common Ignores
+# ===============================================
+
+# Terraform
+.terraform/ # Terraform state and plugins
+*.tfplan # Terraform plan files
+*.tfstate # Terraform state files (critical, NEVER commit)
+*.tfstate.backup
+crash.log
+override.tf
+override.tf.json
+.terraformrc # Terraform CLI config (could contain credentials)
+
+# Pulumi
+Pulumi.*.yaml.bak # Pulumi backup files
+Pulumi.yaml.local # Pulumi local config
+
+# Ansible (Sensitive files / temp files)
+*.retry # Ansible retry files
+*.vault_pass.txt # Vault password files (NEVER commit)
+*.passwords # Generic password files
+*secret* # Generic secret files
+.ansible/ # Ansible temporary files/cache
+
+# Kubernetes manifests (if generated or sensitive)
+# If you are generating YAMLs dynamically, ensure the generated output is ignored
+# e.g., 'k8s-generated/*.yaml'
+# Kubeconfig files (NEVER commit)
+kubeconfig
+*.kubeconfig
+
+# ===============================================
+# Containerization
+# ===============================================
+
+# Docker
+!/.dockerignore # Ensure .dockerignore itself is not ignored
+*.log # Docker build logs
+*.pid # Process ID files
+*.sock # Unix sockets
+*.swp # Swap files
+*.tmp # Temporary files
+
+# ===============================================
+# Other common development ignores
+# ===============================================
+# Local build output, caches, etc.
+**/node_modules
+**/dist
+**/tmp
+**/.angular/cache
+**/.next
+**/.nx/cache
+**/.nx/daemon
+**/.nx/graphs
+**/build
+**/dist
+**/*.egg-info
+**/.eggs
+**/*.pyz
+**/*.pyz.json
+**/.ipynb_checkpoints
+**/*.ipynb_checkpoints
+**/notebooks/.ipynb_checkpoints
+**/*.bak
+**/.terraform
+**/*.tfplan
+**/*.tfstate
+**/*.tfstate.backup
+**/crash.log
+**/override.tf
+**/override.tf.json
+**/.terraformrc
+**/Pulumi.*.yaml.bak
+**/Pulumi.yaml.local
+**/*.retry
+**/*.vault_pass.txt
+**/*.passwords
+**/*secret*
+**/.ansible
+**/kubeconfig
+**/*.kubeconfig
+**/.dockerignore
+**/*.log
+**/*.pid
+**/*.sock
+**/*.swp
+**/*.tmp

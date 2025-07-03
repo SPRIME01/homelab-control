@@ -1,0 +1,64 @@
+# <your-ai-monorepo>/.pre-commit-config.yaml
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0 # Use a stable release
+    hooks:
+      - id: check-yaml
+      - id: check-json
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+
+  - repo: https://github.com/astral-sh/ruff
+    rev: v0.0.288 # Or latest stable ruff release
+    hooks:
+      - id: ruff
+        args: [--fix] # Automatically fix simple issues
+      - id: ruff-format # Use ruff's formatter
+        args: []
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy (Python Type Checking)
+        entry: uv run -- mypy
+        language: system # Runs in your activated environment
+        types: [python]
+        pass_filenames: false # Mypy checks relative to cwd, not individual files
+        always_run: true # Ensures full type check before commit
+        # files: ^(apps|libs)/.+/\.py$ # Regex to select files, or let mypy handle it from cwd
+
+      - id: pytest
+        name: pytest (Python Unit Tests)
+        entry: uv run -- pytest
+        language: system
+        types: [python]
+        pass_filenames: false # Run all tests or use a smarter nx-affected way
+        always_run: true
+        # Optionally, to only run affected tests (more advanced):
+        # entry: bash -c 'uv run -- pytest $(nx show graph --affected --files $PY_FILES | jq -r ".projects.affected[]")'
+        # pass_filenames: false # Don't pass specific files
+        # require an environment variable setup for nx in pre-commit hook or use a wrapper script
+
+      - id: nx-lint-affected
+        name: Nx Affected Lint (JS/TS, Python, etc.)
+        entry: pnpm nx affected --target=lint --base=main --exclude=*.md
+        language: system
+        pass_filenames: false
+        stages: [commit] # Only run on commit
+        # Adjust files regex as needed if you only want to lint specific types
+        # files: \.(ts|js|jsx|tsx|json|scss|css|less|html|py)$
+
+      - id: nx-typecheck-affected
+        name: Nx Affected Typecheck
+        entry: pnpm nx affected --target=typecheck --base=main
+        language: system
+        pass_filenames: false
+        stages: [commit]
+
+      - id: nx-test-affected
+        name: Nx Affected Test
+        entry: pnpm nx affected --target=test --base=main
+        language: system
+        pass_filenames: false
+        stages: [commit]

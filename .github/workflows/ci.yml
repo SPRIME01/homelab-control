@@ -1,0 +1,77 @@
+# .github/workflows/ci.yml
+name: Monorepo CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15 # Adjust as needed
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Important for nx affected to compare with base branch
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Or your preferred LTS
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install Node.js Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Set up Python with pyenv
+        uses: py-actions/pyenv-action@v2
+        with:
+          python-version: '3.11.9' # Match your pyenv global version
+          # cache: true # Optional: cache pyenv builds
+
+      - name: Ensure uv is installed
+        run: pip install uv # Or if uv is globally installed, just uv
+
+      - name: Install Root Python Dev Dependencies
+        run: uv sync --with dev --cwd . # Assumes root pyproject.toml
+
+      - name: Restore Nx Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .nx/cache
+          key: ${{ runner.os }}-nx-${{ hashFiles('pnpm-lock.yaml') }} # Include pnpm lock
+          # Potentially include hash of root pyproject.toml and lock file for python deps as well
+          # key: ${{ runner.os }}-nx-${{ hashFiles('pnpm-lock.yaml', 'pyproject.toml', 'uv.lock') }}
+
+      - name: Run Nx Affected Lint
+        run: pnpm nx affected --target=lint --base=${{ github.event.pull_request.base.sha || 'main' }} --parallel=3 # Parallelize for speed
+
+      - name: Run Nx Affected Typecheck
+        run: pnpm nx affected --target=typecheck --base=${{ github.event.pull_request.base.sha || 'main' }} --parallel=3
+
+      - name: Run Nx Affected Test
+        run: pnpm nx affected --target=test --base=${{ github.event.pull_request.base.sha || 'main' }} --parallel=3
+
+      - name: Run Nx Affected Build (JS/TS apps/libs)
+        run: pnpm nx affected --target=build --base=${{ github.event.pull_request.base.sha || 'main' }} --parallel=3
+
+      # Optional: Add a step for building Python packages if they are meant to be deployed as distributables
+      # - name: Run Nx Affected Build Python
+      #   run: pnpm nx affected --target=build-python --base=${{ github.event.pull_request.base.sha || 'main' }}
+
+      - name: Store Nx Cache
+        uses: actions/cache/save@v4
+        with:
+          path: .nx/cache
+          key: ${{ runner.os }}-nx-${{ hashFiles('pnpm-lock.yaml') }}
+          # key: ${{ runner.os }}-nx-${{ hashFiles('pnpm-lock.yaml', 'pyproject.toml', 'uv.lock') }}

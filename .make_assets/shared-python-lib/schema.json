@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "SharedPythonLib",
+  "title": "Python Library Generator",
+  "description": "Generates a Python library with preferred tooling (uv, ruff, mypy, pytest).",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the library.",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What name would you like to use for the library?",
+      "alias": "n"
+    },
+    "directory": {
+      "type": "string",
+      "description": "The directory where the library will be generated.",
+      "alias": "d",
+      "default": "libs"
+    },
+    "tags": {
+      "type": "string",
+      "description": "Add tags to the project (comma separated) for Nx affected commands.",
+      "alias": "t"
+    },
+    "projectNameAndRootFormat": {
+      "type": "string",
+      "description": "How to format the project name and root directory.",
+      "enum": ["as-provided", "derived"],
+      "default": "derived"
+    },
+    "addModuleSpecifier": {
+      "type": "boolean",
+      "description": "Add the module specifier to the pyproject.toml.",
+      "default": true
+    }
+  },
+  "required": ["name"]
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SharedPythonApp",
+  "title": "Python Application Generator",
+  "description": "Generates a Python application with preferred tooling (uv, ruff, mypy, pytest).",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the application.",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What name would you like to use for the application?",
+      "alias": "n"
+    },
+    "directory": {
+      "type": "string",
+      "description": "The directory where the application will be generated.",
+      "alias": "d",
+      "default": "apps"
+    },
+    "tags": {
+      "type": "string",
+      "description": "Add tags to the project (comma separated) for Nx affected commands.",
+      "alias": "t"
+    },
+    "projectNameAndRootFormat": {
+      "type": "string",
+      "description": "How to format the project name and root directory.",
+      "enum": ["as-provided", "derived"],
+      "default": "derived"
+    },
+    "addModuleSpecifier": {
+      "type": "boolean",
+      "description": "Add the module specifier to the pyproject.toml.",
+      "default": true
+    }
+  },
+  "required": ["name"]
+}
