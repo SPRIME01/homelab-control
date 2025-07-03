@@ -107,7 +107,7 @@ def install_pre_commit():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Monorepo setup script.")
     parser.add_argument("action", help="Action to perform (e.g., init_nx, init_python_env, install_pre_commit)")
-    parser.add_argument("--python-version", default="3.11.9", help="Python version to install via pyenv.")
+    parser.add_argument("--python-version", default="3.12.1", help="Python version to install via pyenv.")
     parser.add_argument("--nx-python-plugin-version", default="21.0.3", help="Version of @nxlv/python Nx plugin.")
     parser.add_argument("--rust-toolchain-uv-install", action="store_true", help="Install uv via rustup/cargo.")
     parser.add_argument("--root-pyproject-toml", default=os.path.join(os.getcwd(), "pyproject.toml"),

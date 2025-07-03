@@ -23,8 +23,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Or your preferred LTS
-          cache: 'pnpm'
+          node-version: "20" # Or your preferred LTS
+          cache: "pnpm"
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Install pnpm
@@ -36,7 +36,7 @@ jobs:
       - name: Set up Python with pyenv
         uses: py-actions/pyenv-action@v2
         with:
-          python-version: '3.11.9' # Match your pyenv global version
+          python-version: "3.12.1" # Match your pyenv global version
           # cache: true # Optional: cache pyenv builds
 
       - name: Ensure uv is installed

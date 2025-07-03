@@ -11,7 +11,7 @@
 # ==============================================================================
 # Configuration Variables - Adjust as needed
 # ==============================================================================
-PYTHON_VERSION ?= 3.11.9
+PYTHON_VERSION ?= 3.12.1
 NX_PYTHON_PLUGIN_VERSION ?= 21.0.3 # Updated to latest stable for @nxlv/python
 RUST_TOOLCHAIN_UV_INSTALL ?= false # Set to true to install uv via rustup for a self-contained install
 # Add your custom Nx generator details
