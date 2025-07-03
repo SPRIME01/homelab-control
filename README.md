@@ -37,8 +37,8 @@
 
 ```bash
 # 1. Clone repo
-git clone https://github.com/your-org/home_station_infra_kit.git
-cd home_station_infra_kit
+git clone https://github.com/SPRIME01/homelab-control.git
+cd homelab-control
 
 # 2. Install dependencies
 npm install
