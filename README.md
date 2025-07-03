@@ -120,7 +120,7 @@ flowchart LR
 ## 🔧 Prerequisites
 
 * **Windows 11 Pro** with WSL2 (Ubuntu)
-* **Python 3.11.9** (managed via pyenv)
+* **Python 3.12.1** (managed via pyenv)
 * **Node.js ≥ 16** + **pnpm**
 * **uv** (Python package manager)
 * **Pulumi CLI** & **Ansible**
