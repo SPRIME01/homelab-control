@@ -1,25 +1,41 @@
 ```mermaid
 graph TD
-    A[Root Directory] --> B[apps/]
-    A --> C[libs/]
-    A --> D[tools/]
-    A --> E[backups/]
-    A --> F[docker/]
-    A --> G[Makefile]
-    A --> H[nx.json]
-    A --> I[package.json]
-    A --> J[pyproject.toml]
-    A --> K[README.md]
+    A[🏠 homelab-control<br/>Root Directory] --> B[📱 apps/]
+    A --> C[📚 libs/]
+    A --> D[🔧 tools/]
+    A --> E[💾 backups/]
+    A --> F[🐳 docker/]
+    A --> G[⚙️ .make_assets/]
+    A --> H[📜 scripts/]
+    A --> I[📋 Makefile]
+    A --> J[⚙️ nx.json]
+    A --> K[📦 package.json]
+    A --> L[🐍 pyproject.toml]
+    A --> M[📖 README.md]
 
-    B --> B1[pulumi-control/]
-    B --> B2[ansible-playbooks/]
-    B --> B3[argocd-helm-charts/]
-    B --> B4[otel-collector/]
+    B --> B1[☁️ pulumi-control/<br/>Infrastructure as Code]
+    B --> B2[⚙️ ansible-playbooks/<br/>Configuration Management]
+    B --> B3[🔄 argocd-helm-charts/<br/>GitOps Applications]
+    B --> B4[📊 otel-collector/<br/>Observability]
 
-    C --> C1[shared-types/]
-    C --> C2[kube-utils/]
-    C --> C3[ci-scripts/]
+    C --> C1[🔗 shared-types/<br/>Common Interfaces]
+    C --> C2[☸️ kube-utils/<br/>Kubernetes Helpers]
+    C --> C3[🔧 ci-scripts/<br/>Build & Deploy Scripts]
 
-    D --> D1[nx-plugins/]
-    D --> D2[generators/]
+    D --> D1[🔌 nx-plugins/<br/>Custom Executors]
+    D --> D2[🏗️ generators/<br/>Project Templates]
+
+    G --> G1[🐍 shared-python-app/<br/>Python App Template]
+    G --> G2[📚 shared-python-lib/<br/>Python Lib Template]
+    G --> G3[🪝 .pre-commit-config.yaml<br/>Git Hooks]
+    G --> G4[📜 setup_helper.sh<br/>Generator Installer]
+
+    H --> H1[🚀 setup.py<br/>Environment Setup]
+
+    style A fill:#e3f2fd,stroke:#0277bd,stroke-width:3px
+    style B fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style C fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style D fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style G fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    style H fill:#f1f8e9,stroke:#689f38,stroke-width:2px
 ```

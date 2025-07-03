@@ -1,0 +1,58 @@
+```mermaid
+flowchart TD
+    Start([🚀 Start]) --> Setup{First time?}
+
+    Setup -->|Yes| InitEnv[📋 make setup<br/>Initialize environment]
+    Setup -->|No| DevChoice{What do you want to do?}
+
+    InitEnv --> EnvSetup[🐍 Python 3.12.1 + uv<br/>📦 pnpm + Nx<br/>🪝 Pre-commit hooks]
+    EnvSetup --> DevChoice
+
+    DevChoice -->|Create Service| NewApp[📱 make app NAME=my-service<br/>Generate Python application]
+    DevChoice -->|Create Library| NewLib[📚 make lib NAME=shared-utils<br/>Generate Python library]
+    DevChoice -->|Daily Development| DailyDev[💻 Daily Development Workflow]
+    DevChoice -->|Deploy Infrastructure| InfraDeploy[☁️ Infrastructure Deployment]
+    DevChoice -->|Configure Hosts| ConfigMgmt[⚙️ Configuration Management]
+    DevChoice -->|Monitor System| Monitoring[📊 System Monitoring]
+
+    NewApp --> CodeDev[✏️ Write code & tests]
+    NewLib --> CodeDev
+
+    CodeDev --> QualityCheck[🔍 make lint<br/>🧐 make typecheck<br/>🧪 make test]
+    QualityCheck --> QualityPass{Quality checks pass?}
+    QualityPass -->|No| CodeDev
+    QualityPass -->|Yes| BuildApp[📦 make build]
+
+    BuildApp --> Container[🐳 make containerize PROJECT=my-service<br/>Build & push to Harbor]
+    Container --> GitCommit[📝 Git commit<br/>🪝 Pre-commit hooks run]
+    GitCommit --> GitPush[⬆️ Git push]
+    GitPush --> ArgoSync[🔄 ArgoCD auto-sync<br/>Deploy to K3s]
+
+    DailyDev --> QualityCheck
+
+    InfraDeploy --> InfraPlan[🗺️ make infra-plan TARGET=control-plane<br/>Review changes]
+    InfraPlan --> InfraApprove{Changes look good?}
+    InfraApprove -->|No| InfraDeploy
+    InfraApprove -->|Yes| InfraApply[🚀 make infra-apply TARGET=control-plane<br/>Deploy with Pulumi]
+    InfraApply --> K3sReady[☸️ K3s cluster ready]
+
+    ConfigMgmt --> AnsibleRun[⚙️ make ansible-run PLAYBOOK=bootstrap-wsl2<br/>Configure WSL2 host]
+    AnsibleRun --> HostReady[🖥️ Host configured]
+
+    K3sReady --> ServicesReady[🌐 Services available:<br/>• Traefik Dashboard<br/>• ArgoCD UI<br/>• Vault UI<br/>• Grafana<br/>• Homepage Portal]
+    HostReady --> ServicesReady
+    ArgoSync --> ServicesReady
+
+    Monitoring --> Dashboard[📊 Access dashboards:<br/>• Grafana (metrics)<br/>• Loki (logs)<br/>• Jaeger (traces)<br/>• Homepage (portal)]
+
+    ServicesReady --> Success([✅ Success!<br/>HomeStation operational])
+    Dashboard --> Success
+
+    Success --> DevChoice
+
+    style Start fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    style Success fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    style QualityCheck fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style ArgoSync fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style ServicesReady fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+```
